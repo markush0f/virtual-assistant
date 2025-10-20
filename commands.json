@@ -1,0 +1,22 @@
+[
+    {
+        "phrase": "sube volumen",
+        "action": "volume_up"
+    },
+    {
+        "phrase": "baja volumen",
+        "action": "volume_down"
+    },
+    {
+        "phrase": "abre youtube",
+        "action": "open_youtube"
+    },
+    {
+        "phrase": "abre bloc de notas",
+        "action": "open_notepad"
+    },
+    {
+        "phrase": "abre calculadora",
+        "action": "open_calculator"
+    }
+]
