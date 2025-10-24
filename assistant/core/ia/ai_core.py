@@ -1,10 +1,13 @@
 import json
 import subprocess
+from assistant.core.ia.load_model import ModelLoader
 
 
 class AICore:
-    def __init__(self, model_name: str = "mistral:7b-instruct"):
-        self.model_name = model_name
+    def __init__(self):
+        loader = ModelLoader()
+        loader.load_model("mistral:7b-instruct")
+        self.model_name = loader.get_active_model()
 
     def ask(self, prompt: str) -> dict:
         """
@@ -40,7 +43,7 @@ User:
 
             raw_output = result.stdout.strip()
             if not raw_output:
-                raw_output = "Hola 👋"
+                raw_output = "No response from model."
 
             print(f"\nRAW MODEL OUTPUT:\n{raw_output}\n")
 
