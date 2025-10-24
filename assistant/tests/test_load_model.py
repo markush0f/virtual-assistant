@@ -1,10 +1,10 @@
 from assistant.core.ia.ai_core import AICore
 
 
-ai = AICore("deepseek-r1")
+ai = AICore()
 
 print("IA local iniciada. Escribe 'salir' para terminar.\n")
-
+print("Modelo utilizado:", ai.model_name)
 while True:
     text = input("Tú: ")
     if text.lower() == "salir":

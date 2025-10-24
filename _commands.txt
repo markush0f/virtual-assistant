@@ -1,0 +1,1 @@
+Load first model: ollama pull mistral:7b-instruct
