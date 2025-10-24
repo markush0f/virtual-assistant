@@ -2,6 +2,7 @@
 app_manager.py
 ---------------
 Scans Windows Start Menu shortcuts (.lnk) and allows opening apps by name.
+Fully autonomous — no user input required.
 Integrated with the assistant intent system.
 """
 
@@ -58,55 +59,32 @@ def open_app(app_name: str) -> str:
         except Exception as e:
             return f"❌ Error al abrir {app_name}: {e}"
 
-    # Fuzzy match (find best 3)
+    # Fuzzy match (find best candidate)
     matches = process.extract(app_name, apps_dict.keys(), limit=3)
-    if not matches or matches[0][1] < 60:
+
+    if not matches:
         return f"❌ No se encontró ninguna aplicación llamada '{app_name}'"
 
     best_match, score, _ = matches[0]
-    if score >= 85:
-        os.startfile(apps_dict[best_match])
-        return f"✅ Abriendo {best_match}"
-    else:
-        # Show options to user
-        options = "\n".join(
-            [f"{i+1}. {m[0]} ({m[1]:.1f}%)" for i, m in enumerate(matches)]
-        )
-        print(f"\nCoincidencias encontradas:\n{options}")
+
+    # Autoselect best match if high confidence
+    if score >= 80:
         try:
-            choice = int(input("\nElige una aplicación (1-3): "))
-            if 1 <= choice <= len(matches):
-                selected_app = matches[choice - 1][0]
-                os.startfile(apps_dict[selected_app])
-                return f"✅ Abriendo {selected_app}"
-            else:
-                return "⚠️ Opción fuera de rango."
-        except ValueError:
-            return "⚠️ Entrada no válida."
+            os.startfile(apps_dict[best_match])
+            return f"✅ No encontré '{app_name}', pero abrí '{best_match}' (coincidencia {score:.0f}%)"
+        except Exception as e:
+            return f"❌ Error al abrir '{best_match}': {e}"
+
+    return f"❌ No se encontró ninguna aplicación suficientemente parecida a '{app_name}' (mejor coincidencia: {best_match}, {score:.0f}%)"
 
 
 def app_exists(app_name: str) -> bool:
-    """
-    Checks if an app is known in the Start Menu cache.
-    """
+    """Checks if an app is known in the Start Menu cache."""
     apps_dict = scan_apps()
     return app_name.lower() in apps_dict
 
 
 def list_apps(limit: int = 20) -> list[str]:
-    """
-    Returns a limited list of detected apps (for debugging or UI display).
-    """
+    """Returns a limited list of detected apps (for debugging or UI display)."""
     apps = scan_apps()
     return sorted(apps.keys())[:limit]
-
-
-# --- CLI for standalone test ---
-if __name__ == "__main__":
-    apps = scan_apps()
-    print(f"📦 {len(apps)} aplicaciones detectadas.")
-    for app in list_apps(20):
-        print("-", app)
-
-    choice = input("\nEscribe el nombre de una app a abrir: ").strip()
-    print(open_app(choice))
