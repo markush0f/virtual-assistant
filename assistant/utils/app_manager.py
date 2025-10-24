@@ -44,7 +44,7 @@ def open_app_fuzzy(app_name: str, apps_dict: dict, threshold: int = 60):
     """
     app_name = app_name.lower().strip()
     if not apps_dict:
-        print("⚠️ No hay aplicaciones detectadas")
+        print("No hay aplicaciones detectadas")
         return False
 
     # Buscar las 3 coincidencias más cercanas
@@ -54,7 +54,7 @@ def open_app_fuzzy(app_name: str, apps_dict: dict, threshold: int = 60):
         print("No se encontró ninguna aplicación con un nombre parecido")
         return False
 
-    print("\n🔍 Coincidencias encontradas:")
+    print("\nCoincidencias encontradas:")
     for i, (match, score, _) in enumerate(matches, start=1):
         print(f"{i}. {match} ({score:.1f}%)")
 
@@ -63,7 +63,7 @@ def open_app_fuzzy(app_name: str, apps_dict: dict, threshold: int = 60):
         if 1 <= choice <= len(matches):
             selected_app = matches[choice - 1][0]
             os.startfile(apps_dict[selected_app])
-            print(f"✅ Abriendo '{selected_app}'")
+            print(f"Abriendo '{selected_app}'")
             return True
     except ValueError:
         print("Entrada no válida")
@@ -73,7 +73,7 @@ def open_app_fuzzy(app_name: str, apps_dict: dict, threshold: int = 60):
 
 if __name__ == "__main__":
     apps = scan_apps()
-    print("📂 Aplicaciones detectadas:")
+    print("Aplicaciones detectadas:")
     for app in apps.keys():
         print("-", app)
 

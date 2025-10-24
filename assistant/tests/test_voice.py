@@ -1,3 +1,8 @@
+"""
+Aplicación de Repetidor de Voz
+La aplicación repetirá lo que hayas dicho hasta que detecte la palabra "salir".
+"""
+
 import speech_recognition as sr
 import pyttsx3
 
@@ -5,10 +10,12 @@ import pyttsx3
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 
+
 def speak(text):
     """Speak text using system TTS."""
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     """Capture audio and convert to text."""
@@ -22,6 +29,7 @@ def listen():
             return "No pude entender lo que dijiste"
         except sr.RequestError:
             return "Error con el servicio de reconocimiento"
+
 
 if __name__ == "__main__":
     print("Dime algo y lo repetiré 👂")
