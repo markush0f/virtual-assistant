@@ -2,6 +2,7 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import pyautogui
+from actions_registry import register_action
 
 
 def get_volume_interface():
@@ -11,39 +12,46 @@ def get_volume_interface():
     return cast(interface, POINTER(IAudioEndpointVolume))
 
 
+@register_action(description="Increase system volume by 10%")
 def volume_up(increment=0.1):
     """Increase system volume by a given step (0.0 to 1.0)."""
     volume = get_volume_interface()
     current = volume.GetMasterVolumeLevelScalar()
     new_volume = min(1.0, current + increment)
     volume.SetMasterVolumeLevelScalar(new_volume, None)
+    print(f"Volume increased to {new_volume:.2f}")
 
 
+@register_action(description="Decrease system volume by 10%")
 def volume_down(decrement=0.1):
     """Decrease system volume by a given step (0.0 to 1.0)."""
     volume = get_volume_interface()
     current = volume.GetMasterVolumeLevelScalar()
     new_volume = max(0.0, current - decrement)
     volume.SetMasterVolumeLevelScalar(new_volume, None)
+    print(f"Volume decreased to {new_volume:.2f}")
 
 
+@register_action(description="Toggle mute or unmute system sound")
 def mute_toggle():
     """Toggle mute/unmute."""
     volume = get_volume_interface()
     is_muted = volume.GetMute()
     volume.SetMute(not is_muted, None)
+    print("Muted" if not is_muted else "🔊 Unmuted")
 
 
+@register_action(description="Unmute the system volume")
 def unmute():
     """Unmute the system volume."""
     volume = get_volume_interface()
     volume.SetMute(0, None)
+    print("🔊 System unmuted")
 
 
+@register_action(description="Take a screenshot and save it as screenshot.png")
 def take_screenshot(filename="screenshot.png"):
     """Take a screenshot and save it."""
     img = pyautogui.screenshot()
     img.save(filename)
     print(f"📸 Screenshot saved as {filename}")
-
-
