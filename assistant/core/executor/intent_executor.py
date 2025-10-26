@@ -1,6 +1,4 @@
 """
-intent_executor.py
-------------------
 Acts as a router that dispatches intents to their corresponding action modules.
 """
 
@@ -22,7 +20,7 @@ class IntentExecutor:
             with open(actions_path, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
-            print(f"⚠️ Could not load actions.json: {e}")
+            print(f"Could not load actions.json: {e}")
             return {}
 
     def execute(self, intent_data: dict) -> str:
@@ -40,7 +38,7 @@ class IntentExecutor:
 
         # Developer-only actions
         if action_info["type"] == "developer" and not self.dev_mode:
-            return "🚫 Developer mode is disabled."
+            return "Developer mode is disabled."
 
         module_name = action_info["module"]
         func_name = action_info["function"]
@@ -60,4 +58,4 @@ class IntentExecutor:
             # execute the function
             return func(*args)
         except Exception as e:
-            return f"❌ Error executing {intent}: {e}"
+            return f"Error executing {intent}: {e}"
