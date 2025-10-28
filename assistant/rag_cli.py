@@ -1,18 +1,30 @@
 from assistant.core.ia.ai_core import AICore
 from assistant.actions_registry import ACTIONS, execute_action
 from assistant.generate_actions_json import load_all_actions
+from assistant.utils import app_manager
 
 
 def main():
     print("🤖 Virtual Assistant RAG CLI")
     print("Modelo activo: mistral:7b-instruct")
-    print("Escribe tu orden o 'exit' para salir.\n")
+    print("Inicializando entorno...\n")
 
-    # ✅ Cargar todas las acciones registradas al inicio
+    # ✅ 1️⃣ Cargar todas las acciones del sistema
     load_all_actions()
     print(f"✅ {len(ACTIONS)} acciones cargadas.\n")
 
+    # ✅ 2️⃣ Escanear y generar cache de aplicaciones
+    try:
+        app_data = app_manager.export_apps_to_json()
+        total = len(app_data["desktop_apps"]) + len(app_data["uwp_apps"])
+        print(f"📁 App cache actualizado ({total} apps detectadas)\n")
+    except Exception as e:
+        print(f"⚠️ Error al escanear aplicaciones: {e}\n")
+
+    # ✅ 3️⃣ Inicializar el modelo local
     ai = AICore()
+
+    print("🎙️ Escribe una orden (ej. 'open spotify') o 'exit' para salir.\n")
 
     while True:
         user_input = input("❓ Pregunta: ").strip()
@@ -22,7 +34,7 @@ def main():
 
         response = ai.ask(user_input)
 
-        # --- Si la IA devuelve un intent JSON ---
+        # --- Procesar respuesta del modelo ---
         if isinstance(response, dict):
             intent = response.get("intent")
 
@@ -30,12 +42,10 @@ def main():
                 print(f"⚠️ Error: {response.get('message')}\n")
                 continue
 
-            # Si es texto normal (no comando)
             if intent == "text":
                 print(f"💬 {response.get('response')}\n")
                 continue
 
-            # Si es una acción registrada (intent válido)
             if intent in ACTIONS:
                 print(f"⚙️ Ejecutando acción: {intent}")
                 kwargs = {k: v for k, v in response.items() if k != "intent"}
