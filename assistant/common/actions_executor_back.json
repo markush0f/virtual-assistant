@@ -1,0 +1,53 @@
+{
+    "actions_description": "You can add here the predefined actions of the assistant.",
+    "open_app": {
+        "type": "safe",
+        "description": "Opens a desktop application by name",
+        "module": "app_actions",
+        "function": "open_app",
+        "params": [
+            "target"
+        ]
+    },
+    "close_app": {
+        "type": "safe",
+        "description": "Closes an application process by name",
+        "module": "app_actions",
+        "function": "close_app",
+        "params": [
+            "target"
+        ]
+    },
+    "volume_up": {
+        "type": "safe",
+        "description": "Increases system volume",
+        "module": "volume_actions",
+        "function": "volume_up",
+        "params": []
+    },
+    "volume_down": {
+        "type": "safe",
+        "description": "Decreases system volume",
+        "module": "volume_actions",
+        "function": "volume_down",
+        "params": []
+    },
+    "search_google": {
+        "type": "safe",
+        "description": "Searches a query on Google",
+        "module": "search_actions",
+        "function": "search_google",
+        "params": [
+            "target"
+        ]
+    },
+    "execute_command": {
+        "type": "developer",
+        "description": "Executes a system command provided by the model",
+        "module": "system_actions",
+        "function": "execute_system_command",
+        "params": [
+            "command"
+        ]
+    }
+}

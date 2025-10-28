@@ -1,7 +1,7 @@
 import os
 import psutil
 from assistant.utils import app_manager
-from actions_registry import register_action
+from assistant.actions_registry import register_action
 
 
 @register_action(description="Open a desktop application by name")

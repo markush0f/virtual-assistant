@@ -1,6 +1,6 @@
 import webbrowser
 import urllib.parse
-from actions_registry import register_action
+from assistant.actions_registry import register_action
 
 
 @register_action(description="Search a query on YouTube")
