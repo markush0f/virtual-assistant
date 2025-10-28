@@ -11,8 +11,8 @@ class AICore:
 
     def ask(self, prompt: str) -> dict:
         """
-        Sends the user input directly to Ollama without any system wrappers.
-        Works perfectly for instruction-tuned models like Mistral or Llama3.
+        Sends the user input directly to Ollama (non-blocking version).
+        Uses the same instruction-tuned system prompt as before.
         """
         try:
             system_prompt = """
@@ -32,22 +32,27 @@ User:
 """
             full_prompt = f"{system_prompt}\n{prompt}"
 
-            result = subprocess.run(
+            # Launch Ollama process (streaming, non-blocking)
+            process = subprocess.Popen(
                 ["ollama", "run", self.model_name],
-                input=full_prompt,
-                capture_output=True,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 text=True,
                 encoding="utf-8",
-                errors="ignore",
+                errors="ignore"
             )
 
-            raw_output = result.stdout.strip()
+            # Send the prompt and close input stream
+            stdout_data, stderr_data = process.communicate(full_prompt)
+
+            raw_output = (stdout_data or "").strip()
             if not raw_output:
                 raw_output = "No response from model."
 
             print(f"\nRAW MODEL OUTPUT:\n{raw_output}\n")
 
-            # Extract JSON
+            # Try extracting JSON
             json_start = raw_output.find("{")
             json_end = raw_output.rfind("}")
             if json_start != -1 and json_end != -1:
@@ -58,3 +63,4 @@ User:
 
         except Exception as e:
             return {"intent": "error", "message": str(e)}
+
