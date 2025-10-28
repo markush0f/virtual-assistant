@@ -1,6 +1,6 @@
 import os
 import psutil
-from assistant.utils import app_manager
+from assistant.utils.app_manager import app_manager
 from assistant.actions_registry import register_action
 
 

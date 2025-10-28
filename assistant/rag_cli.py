@@ -1,7 +1,7 @@
 from assistant.core.ia.ai_core import AICore
 from assistant.actions_registry import ACTIONS, execute_action
 from assistant.generate_actions_json import load_all_actions
-from assistant.utils import app_manager
+from assistant.utils.app_manager import app_manager
 
 
 def main():
