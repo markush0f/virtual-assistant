@@ -36,28 +36,69 @@ def scan_apps(force_refresh: bool = False) -> dict:
 
 # ---------- UWP (MICROSOFT STORE) APPS ----------
 def scan_uwp_apps(force_refresh: bool = False) -> dict:
-    """Retrieve all UWP AppIDs using PowerShell."""
+    """Retrieve all UWP AppIDs using PowerShell, with manual decoding and fallback."""
     global _UWP_CACHE
     if _UWP_CACHE is not None and not force_refresh:
         return _UWP_CACHE
 
     try:
-        ps_command = "Get-StartApps | ForEach-Object { $_.Name + '::' + $_.AppID }"
+        ps_command = [
+            "powershell.exe",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            "Get-StartApps | ForEach-Object { $_.Name + '::' + $_.AppID }",
+        ]
+
+        # Run without auto-decoding to handle ANSI safely
         result = subprocess.run(
-            ["powershell", "-Command", ps_command],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
+            ps_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False
         )
+
+        # Manual decoding (UTF-8 → fallback CP1252)
+        try:
+            output = result.stdout.decode("utf-8", errors="ignore")
+        except UnicodeDecodeError:
+            output = result.stdout.decode("cp1252", errors="ignore")
+
+        # Fallback if PowerShell doesn't return anything
+        if not output.strip():
+            print("'Get-StartApps' returned nothing. Trying Get-AppxPackage...")
+            alt_command = [
+                "powershell.exe",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "Get-AppxPackage | ForEach-Object { $_.Name + '::' + $_.PackageFamilyName }",
+            ]
+            result = subprocess.run(
+                alt_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False
+            )
+            try:
+                output = result.stdout.decode("utf-8", errors="ignore")
+            except UnicodeDecodeError:
+                output = result.stdout.decode("cp1252", errors="ignore")
+
+        if not output.strip():
+            print("⚠️ PowerShell did not return any UWP apps.")
+            _UWP_CACHE = {}
+            return {}
+
         uwp_apps = {}
-        for line in result.stdout.splitlines():
+        for line in output.splitlines():
             if "::" in line:
                 name, appid = line.split("::", 1)
-                uwp_apps[name.lower()] = appid.strip()
+                uwp_apps[name.lower().strip()] = appid.strip()
+
+        print(f"🔍 Found {len(uwp_apps)} UWP apps.")
         _UWP_CACHE = uwp_apps
         return uwp_apps
+
     except Exception as e:
         print(f"⚠️ Could not scan UWP apps: {e}")
+        _UWP_CACHE = {}
         return {}
 
 
@@ -72,9 +113,8 @@ def export_apps_to_json():
     with open(CACHE_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
-    print(
-        f"📁 App cache exported to {CACHE_PATH} ({len(data['desktop_apps']) + len(data['uwp_apps'])} total apps)"
-    )
+    total = len(data["desktop_apps"]) + len(data["uwp_apps"])
+    print(f"📁 App cache exported to {CACHE_PATH} ({total} total apps)")
     return data
 
 
@@ -85,7 +125,12 @@ def open_app(app_name: str) -> str:
 
     # 1️⃣ Try normal desktop apps
     apps_dict = scan_apps()
-    _open_normal_app(app_name, apps_dict)
+    if app_name in apps_dict:
+        try:
+            os.startfile(apps_dict[app_name])
+            return f"✅ Abriendo {app_name}"
+        except Exception as e:
+            return f"❌ Error al abrir {app_name}: {e}"
 
     # 2️⃣ Fuzzy match among .lnk
     if apps_dict:
@@ -100,7 +145,13 @@ def open_app(app_name: str) -> str:
 
     # 3️⃣ Try UWP (Microsoft Store) apps
     uwp_dict = scan_uwp_apps()
-    _open_uwp_app(app_name, uwp_dict)
+    if app_name in uwp_dict:
+        appid = uwp_dict[app_name]
+        try:
+            subprocess.run(["explorer.exe", f"shell:AppsFolder\\{appid}"], shell=True)
+            return f"✅ Abriendo app UWP '{app_name}'"
+        except Exception as e:
+            return f"❌ Error al abrir UWP '{app_name}': {e}"
 
     # 4️⃣ Fuzzy match among UWP apps
     if uwp_dict:
@@ -112,53 +163,3 @@ def open_app(app_name: str) -> str:
             return f"✅ No encontré '{app_name}', pero abrí '{best_match}' (UWP)"
 
     return f"❌ No se encontró ninguna aplicación llamada '{app_name}'"
-
-def _open_normal_app(app_name: str, apps_dict: dict) -> str:
-    if app_name in apps_dict:
-        try:
-            os.startfile(apps_dict[app_name])
-            return f"✅ Abriendo {app_name}"
-        except Exception as e:
-            return f"❌ Error al abrir {app_name}: {e}"
-        
-def _scan_uwp_apps(force_refresh: bool = False) -> dict:
-    """Retrieve all UWP AppIDs using classic PowerShell."""
-    global _UWP_CACHE
-    if _UWP_CACHE is not None and not force_refresh:
-        return _UWP_CACHE
-
-    try:
-        # Explicitly call Windows PowerShell (not pwsh)
-        ps_command = (
-            "powershell.exe -Command "
-            "\"Get-StartApps | ForEach-Object { $_.Name + '::' + $_.AppID }\""
-        )
-
-        result = subprocess.run(
-            ps_command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-        )
-
-        # ✅ Validar salida
-        if not result.stdout:
-            print("⚠️ PowerShell did not return any apps. Maybe run as admin?")
-            _UWP_CACHE = {}
-            return {}
-
-        uwp_apps = {}
-        for line in result.stdout.splitlines():
-            if "::" in line:
-                name, appid = line.split("::", 1)
-                uwp_apps[name.lower()] = appid.strip()
-
-        _UWP_CACHE = uwp_apps
-        print(f"🔍 Found {len(uwp_apps)} UWP apps.")
-        return uwp_apps
-
-    except Exception as e:
-        print(f"⚠️ Could not scan UWP apps: {e}")
-        _UWP_CACHE = {}
-        return {}
