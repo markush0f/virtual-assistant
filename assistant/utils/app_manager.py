@@ -1,3 +1,15 @@
+"""
+App Manager
+-----------
+Handles scanning, caching and opening of Windows desktop (.lnk) and UWP (Microsoft Store) apps.
+
+✅ Features:
+- Scans Start Menu shortcuts recursively
+- Scans UWP apps via PowerShell (safe decoding)
+- Opens both normal and UWP apps (with fuzzy search)
+- Exports app cache to JSON for faster access
+"""
+
 import glob
 import os
 import json
@@ -5,7 +17,7 @@ import subprocess
 from pathlib import Path
 from rapidfuzz import process
 
-# --- Paths ---
+# --- CONFIGURATION ---
 START_MENU_PATHS = [
     r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs",
     os.path.expanduser(r"~\AppData\Roaming\Microsoft\Windows\Start Menu\Programs"),
@@ -30,7 +42,9 @@ def scan_apps(force_refresh: bool = False) -> dict:
             for file in glob.glob(base_path + "/**/*.lnk", recursive=True):
                 name = os.path.basename(file).replace(".lnk", "").lower()
                 apps[name] = file
+
     _APPS_CACHE = apps
+    print(f"🖥️ Found {len(apps)} desktop apps.")
     return apps
 
 
@@ -53,7 +67,10 @@ def scan_uwp_apps(force_refresh: bool = False) -> dict:
 
         # Run without auto-decoding to handle ANSI safely
         result = subprocess.run(
-            ps_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False
+            ps_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=False,
         )
 
         # Manual decoding (UTF-8 → fallback CP1252)
@@ -64,7 +81,7 @@ def scan_uwp_apps(force_refresh: bool = False) -> dict:
 
         # Fallback if PowerShell doesn't return anything
         if not output.strip():
-            print("'Get-StartApps' returned nothing. Trying Get-AppxPackage...")
+            print("⚠️ 'Get-StartApps' returned nothing. Trying Get-AppxPackage...")
             alt_command = [
                 "powershell.exe",
                 "-NoProfile",
@@ -74,7 +91,10 @@ def scan_uwp_apps(force_refresh: bool = False) -> dict:
                 "Get-AppxPackage | ForEach-Object { $_.Name + '::' + $_.PackageFamilyName }",
             ]
             result = subprocess.run(
-                alt_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False
+                alt_command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=False,
             )
             try:
                 output = result.stdout.decode("utf-8", errors="ignore")
@@ -92,7 +112,7 @@ def scan_uwp_apps(force_refresh: bool = False) -> dict:
                 name, appid = line.split("::", 1)
                 uwp_apps[name.lower().strip()] = appid.strip()
 
-        print(f"🔍 Found {len(uwp_apps)} UWP apps.")
+        print(f"📱 Found {len(uwp_apps)} UWP apps.")
         _UWP_CACHE = uwp_apps
         return uwp_apps
 
