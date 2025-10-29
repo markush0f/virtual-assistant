@@ -42,7 +42,7 @@ class AICore:
                 possible_files[0],
             )
 
-            print(f"📂 Using actions file: {config_path}")
+            print(f"Using actions file: {config_path}")
 
             with open(config_path, "r", encoding="utf-8") as f:
                 actions = json.load(f)
