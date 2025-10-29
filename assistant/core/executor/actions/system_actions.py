@@ -2,7 +2,7 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import pyautogui
-from assistant.actions_registry import register_action
+from assistant.decorators.actions_registry import register_action
 
 
 def get_volume_interface():

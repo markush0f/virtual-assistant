@@ -3,7 +3,7 @@ import inspect
 import json
 import pkgutil
 from pathlib import Path
-from assistant.actions_registry import ACTIONS
+from assistant.decorators.actions_registry import ACTIONS
 
 
 def load_all_actions():

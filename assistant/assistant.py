@@ -1,8 +1,8 @@
 import importlib
 import pkgutil
 from pathlib import Path
-from actions_registry import ACTIONS, execute_action, list_actions
-from assistant.generate_actions_json import export_actions_to_json, export_actions_to_json, load_all_actions
+from assistant.decorators.actions_registry import ACTIONS, execute_action, list_actions
+from assistant.core.generate_actions_json import export_actions_to_json, export_actions_to_json, load_all_actions
 
 
 def initialize_actions():

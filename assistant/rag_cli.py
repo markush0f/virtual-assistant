@@ -1,6 +1,6 @@
 from assistant.core.ia.ai_core import AICore
-from assistant.actions_registry import ACTIONS, execute_action
-from assistant.generate_actions_json import load_all_actions
+from assistant.decorators.actions_registry import ACTIONS, execute_action
+from assistant.core.generate_actions_json import load_all_actions
 from assistant.utils.app_manager import app_manager
 
 

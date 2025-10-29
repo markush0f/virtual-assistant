@@ -1,7 +1,7 @@
 import psutil
 import platform
 import math
-from assistant.actions_registry import register_action
+from assistant.decorators.actions_registry import register_action
 
 
 @register_action(description="List running processes")
