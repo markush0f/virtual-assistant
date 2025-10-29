@@ -1,0 +1,143 @@
+{
+    "list_processes": {
+        "type": "safe",
+        "description": "List running processes",
+        "module": "advanced_settings",
+        "function": "list_processes",
+        "params": [
+            "limit"
+        ]
+    },
+    "kill_process": {
+        "type": "dangerous",
+        "description": "Kill a process by partial name",
+        "module": "advanced_settings",
+        "function": "kill_process",
+        "params": [
+            "name"
+        ]
+    },
+    "get_system_info": {
+        "type": "safe",
+        "description": "Get system information (CPU, RAM, Disk)",
+        "module": "advanced_settings",
+        "function": "get_system_info",
+        "params": []
+    },
+    "calculate": {
+        "type": "safe",
+        "description": "Safely evaluate a math expression",
+        "module": "advanced_settings",
+        "function": "calculate",
+        "params": [
+            "expression"
+        ]
+    },
+    "get_disk_usage": {
+        "type": "safe",
+        "description": "Get disk usage information",
+        "module": "advanced_settings",
+        "function": "get_disk_usage",
+        "params": []
+    },
+    "open_app": {
+        "type": "safe",
+        "description": "Open a desktop application by name",
+        "module": "app_actions",
+        "function": "open_app",
+        "params": [
+            "target"
+        ]
+    },
+    "close_app": {
+        "type": "safe",
+        "description": "Close an application process by name",
+        "module": "app_actions",
+        "function": "close_app",
+        "params": [
+            "target"
+        ]
+    },
+    "search_youtube": {
+        "type": "safe",
+        "description": "Search a query on YouTube",
+        "module": "browser_actions",
+        "function": "search_youtube",
+        "params": [
+            "query"
+        ]
+    },
+    "search_google": {
+        "type": "safe",
+        "description": "Search a query on Google",
+        "module": "browser_actions",
+        "function": "search_google",
+        "params": [
+            "query"
+        ]
+    },
+    "open_spotify_song": {
+        "type": "safe",
+        "description": "Search and open a song on Spotify Web",
+        "module": "browser_actions",
+        "function": "open_spotify_song",
+        "params": [
+            "song"
+        ]
+    },
+    "open_gmail": {
+        "type": "safe",
+        "description": "Open Gmail in the default browser",
+        "module": "browser_actions",
+        "function": "open_gmail",
+        "params": []
+    },
+    "read_news": {
+        "type": "safe",
+        "description": "Open Google News in the default browser",
+        "module": "browser_actions",
+        "function": "read_news",
+        "params": []
+    },
+    "volume_up": {
+        "type": "safe",
+        "description": "Increase system volume by 10%",
+        "module": "system_actions",
+        "function": "volume_up",
+        "params": [
+            "increment"
+        ]
+    },
+    "volume_down": {
+        "type": "safe",
+        "description": "Decrease system volume by 10%",
+        "module": "system_actions",
+        "function": "volume_down",
+        "params": [
+            "decrement"
+        ]
+    },
+    "mute_toggle": {
+        "type": "safe",
+        "description": "Toggle mute or unmute system sound",
+        "module": "system_actions",
+        "function": "mute_toggle",
+        "params": []
+    },
+    "unmute": {
+        "type": "safe",
+        "description": "Unmute the system volume",
+        "module": "system_actions",
+        "function": "unmute",
+        "params": []
+    },
+    "take_screenshot": {
+        "type": "safe",
+        "description": "Take a screenshot and save it as screenshot.png",
+        "module": "system_actions",
+        "function": "take_screenshot",
+        "params": [
+            "filename"
+        ]
+    }
+}
