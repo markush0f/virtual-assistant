@@ -1,43 +1,35 @@
+import inspect
+
+# Global dictionary to store all actions
 ACTIONS = {}
 
-
-def register_action(type="safe", description=""):
+def register_action(description="", type="safe"):
     """
-    Decorator to register an assistant action automatically.
-    - type: safe | developer | dangerous
-    - description: short explanation
+    Decorator to register assistant actions dynamically.
+    Usage:
+    @register_action(description="Opens an app")
+    def open_app(target: str): ...
     """
-
-    def wrapper(func):
+    def decorator(func):
         ACTIONS[func.__name__] = {
+            "description": description,
             "type": type,
-            "description": description or func.__doc__,
-            "module": func.__module__,
             "function": func.__name__,
-            "callable": func,  # reference to actual function
+            "module": func.__module__,
+            "callable": func,
         }
+        # print(f"🟢 Registered action: {func.__name__}")
         return func
-
-    return wrapper
-
-
-def list_actions():
-    """List all registered actions."""
-    for name, meta in ACTIONS.items():
-        print(f"{name} → {meta['module']} ({meta['type']})")
+    return decorator
 
 
-def execute_action(name: str, **kwargs):
+def execute_action(action_name: str, **args):
     """Execute a registered action by name."""
-    if name not in ACTIONS:
-        print(f"Unknown action: {name}")
-        return
-    action = ACTIONS[name]
+    action = ACTIONS.get(action_name)
+    if not action:
+        print(f"⚠️ Action '{action_name}' not found.")
+        return None
+
     func = action["callable"]
-
-    # Get only parameters required by the function
-    func_params = func.__code__.co_varnames[: func.__code__.co_argcount]
-    args = {k: v for k, v in kwargs.items() if k in func_params}
-
-    print(f"Executing: {name} | Params: {args}")
+    print(f"Executing: {action_name} | Params: {args}")
     return func(**args)

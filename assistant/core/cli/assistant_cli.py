@@ -1,7 +1,7 @@
-from assistant.core.ia.ai_core import AICore
-from assistant.decorators.actions_registry import ACTIONS, execute_action
 from assistant.core.generate_actions_json import load_all_actions
+from assistant.decorators.actions_registry import ACTIONS, execute_action
 from assistant.utils.app_manager import app_manager
+from assistant.core.ia.ai_core import AICore
 
 
 def main():
@@ -9,11 +9,12 @@ def main():
     print("Modelo activo: mistral:7b-instruct")
     print("Inicializando entorno...\n")
 
-    # ✅ 1️⃣ Cargar todas las acciones del sistema
+    # ✅ 1️⃣ Cargar todas las acciones antes de iniciar nada
+    print("🔄 Cargando módulos de acciones...")
     load_all_actions()
-    print(f"✅ {len(ACTIONS)} acciones cargadas.\n")
+    print(f"✅ {len(ACTIONS)} acciones registradas correctamente.\n")
 
-    # ✅ 2️⃣ Escanear y generar cache de aplicaciones
+    # ✅ 2️⃣ Escanear aplicaciones del sistema
     try:
         app_data = app_manager.export_apps_to_json()
         total = len(app_data["desktop_apps"]) + len(app_data["uwp_apps"])
@@ -23,9 +24,9 @@ def main():
 
     # ✅ 3️⃣ Inicializar el modelo local
     ai = AICore()
-
     print("🎙️ Escribe una orden (ej. 'open spotify') o 'exit' para salir.\n")
 
+    # ✅ 4️⃣ Bucle principal del asistente
     while True:
         user_input = input("❓ Pregunta: ").strip()
         if user_input.lower() in ["exit", "salir", "quit"]:
@@ -34,7 +35,6 @@ def main():
 
         response = ai.ask(user_input)
 
-        # --- Procesar respuesta del modelo ---
         if isinstance(response, dict):
             intent = response.get("intent")
 

@@ -4,6 +4,7 @@ from assistant.utils.app_manager import app_manager
 from assistant.decorators.actions_registry import register_action
 
 
+
 @register_action(description="Open a desktop application by name")
 def open_app(target: str) -> str:
     """Open a desktop application by name."""

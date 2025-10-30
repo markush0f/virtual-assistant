@@ -101,7 +101,7 @@
     },
     "volume_up": {
         "type": "safe",
-        "description": "Increase system volume by 10%",
+        "description": "Decrease system volume by 10%",
         "module": "system_actions",
         "function": "volume_up",
         "params": [
