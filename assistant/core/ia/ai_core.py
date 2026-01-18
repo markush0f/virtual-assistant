@@ -1,14 +1,27 @@
 import json
 import subprocess
 from pathlib import Path
+from typing import Callable
 from assistant.core.ia.load_model import ModelLoader
+from assistant.core.ia.provider_store import get_provider_config
 
 
 class AICore:
     def __init__(self):
-        loader = ModelLoader()
-        loader.load_model("mistral:7b-instruct")
-        self.model_name = loader.get_active_model()
+        self.config = get_provider_config()
+        self.provider = self.config.get("provider", "local")
+        self.model_name = self.config.get("model", "mistral:7b-instruct")
+        self._invoke: Callable[[str, str], dict] | None = None
+
+        if self.provider == "local":
+            loader = ModelLoader()
+            loader.load_model(self.model_name)
+            self.model_name = loader.get_active_model()
+            self._invoke = self._ask_local
+        elif self.provider == "openai":
+            self._invoke = self._ask_openai
+        else:
+            raise ValueError(f"Unknown provider: {self.provider}")
 
     def _load_actions_description(self) -> str:
         """Read all available actions dynamically from assistant/common."""
@@ -57,6 +70,7 @@ class AICore:
             return "No actions available."
 
     def ask(self, prompt: str) -> dict:
+        """Route prompt through the configured provider."""
         try:
             available_actions = self._load_actions_description()
             system_prompt = f"""
@@ -79,20 +93,10 @@ User:
 """
             full_prompt = f"{system_prompt}\n{prompt}"
 
-            result = subprocess.run(
-                ["ollama", "run", self.model_name],
-                input=full_prompt,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="ignore",
-            )
+            if not self._invoke:
+                return {"intent": "error", "message": "No provider configured"}
 
-            raw_output = result.stdout.strip()
-            if not raw_output:
-                raw_output = "No response from model."
-
-            print(f"\nRAW MODEL OUTPUT:\n{raw_output}\n")
+            raw_output = self._invoke(full_prompt, self.model_name)
 
             json_start = raw_output.find("{")
             json_end = raw_output.rfind("}")
@@ -113,3 +117,43 @@ User:
 
         except Exception as e:  # noqa: BLE001
             return {"intent": "error", "message": str(e)}
+
+    def _ask_local(self, prompt: str, model_name: str) -> str:
+        """Invoke local model via Ollama."""
+        result = subprocess.run(
+            ["ollama", "run", model_name],
+            input=prompt,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
+        )
+        raw_output = result.stdout.strip()
+        if not raw_output:
+            raw_output = "No response from model."
+
+        print(f"\nRAW MODEL OUTPUT (local):\n{raw_output}\n")
+        return raw_output
+
+    def _ask_openai(self, prompt: str, model_name: str) -> str:
+        """Invoke OpenAI model using chat completions."""
+        api_key = self.config.get("api_key")
+        if not api_key:
+            raise RuntimeError("OpenAI provider requires an API key stored in SQLite.")
+        try:
+            from openai import OpenAI
+        except ImportError as exc:  # pragma: no cover
+            raise RuntimeError("openai package not installed. Add it to requirements.txt") from exc
+
+        client = OpenAI(api_key=api_key)
+        resp = client.chat.completions.create(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+        )
+        raw_output = (resp.choices[0].message.content or "").strip()
+        if not raw_output:
+            raw_output = "No response from model."
+
+        print(f"\nRAW MODEL OUTPUT (openai):\n{raw_output}\n")
+        return raw_output

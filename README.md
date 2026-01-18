@@ -58,6 +58,18 @@ python main.py
 ```
 Speak your command; say "salir" or "exit" to quit. Requires a microphone and audio permissions.
 
+### Choose provider (local vs OpenAI)
+- Default: local Ollama model stored in SQLite settings (`assistant/common/settings.db`).
+- To switch to OpenAI, set the provider in code:
+  ```python
+  from assistant.core.ia.provider_store import set_provider_config
+  set_provider_config("openai", "gpt-4o-mini", api_key="YOUR_OPENAI_KEY")
+  ```
+  Switch back to local:
+  ```python
+  set_provider_config("local", "mistral:7b-instruct")
+  ```
+
 ---
 
 ## Available actions
