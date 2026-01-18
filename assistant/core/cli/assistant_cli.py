@@ -5,32 +5,32 @@ from assistant.core.ia.ai_core import AICore
 
 
 def main():
-    print("🤖 Virtual Assistant RAG CLI")
+    print("Virtual Assistant RAG CLI")
     print("Modelo activo: mistral:7b-instruct")
     print("Inicializando entorno...\n")
 
-    # ✅ 1️⃣ Cargar todas las acciones antes de iniciar nada
-    print("🔄 Cargando módulos de acciones...")
+    # Cargar todas las acciones antes de iniciar nada
+    print("Cargando modulos de acciones...")
     load_all_actions()
-    print(f"✅ {len(ACTIONS)} acciones registradas correctamente.\n")
+    print(f"{len(ACTIONS)} acciones registradas correctamente.\n")
 
-    # ✅ 2️⃣ Escanear aplicaciones del sistema
+    # Escanear aplicaciones del sistema
     try:
         app_data = app_manager.export_apps_to_json()
         total = len(app_data["desktop_apps"]) + len(app_data["uwp_apps"])
-        print(f"📁 App cache actualizado ({total} apps detectadas)\n")
-    except Exception as e:
-        print(f"⚠️ Error al escanear aplicaciones: {e}\n")
+        print(f"[info] App cache actualizado ({total} apps detectadas)\n")
+    except Exception as e:  # noqa: BLE001
+        print(f"[error] Error al escanear aplicaciones: {e}\n")
 
-    # ✅ 3️⃣ Inicializar el modelo local
+    # Inicializar el modelo local
     ai = AICore()
-    print("🎙️ Escribe una orden (ej. 'open spotify') o 'exit' para salir.\n")
+    print("[ready] Escribe una orden (ej. 'open spotify') o 'exit' para salir.\n")
 
-    # ✅ 4️⃣ Bucle principal del asistente
+    # Bucle principal del asistente
     while True:
-        user_input = input("❓ Pregunta: ").strip()
+        user_input = input("Pregunta: ").strip()
         if user_input.lower() in ["exit", "salir", "quit"]:
-            print("👋 Saliendo del asistente.")
+            print("Saliendo del asistente.")
             break
 
         response = ai.ask(user_input)
@@ -39,22 +39,22 @@ def main():
             intent = response.get("intent")
 
             if intent == "error":
-                print(f"⚠️ Error: {response.get('message')}\n")
+                print(f"[error] {response.get('message')}\n")
                 continue
 
             if intent == "text":
-                print(f"💬 {response.get('response')}\n")
+                print(f"{response.get('response')}\n")
                 continue
 
             if intent in ACTIONS:
-                print(f"⚙️ Ejecutando acción: {intent}")
+                print(f"[accion] Ejecutando: {intent}")
                 kwargs = {k: v for k, v in response.items() if k != "intent"}
                 execute_action(intent, **kwargs)
                 print()
             else:
-                print(f"❓ Acción '{intent}' no registrada.\n")
+                print(f"Accion '{intent}' no registrada.\n")
         else:
-            print(f"💬 {response}\n")
+            print(f"{response}\n")
 
 
 if __name__ == "__main__":

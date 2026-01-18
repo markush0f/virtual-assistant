@@ -1,90 +1,89 @@
-# 🤖 Virtual Assistant (RAG + Voice)
+# Virtual Assistant (RAG + Voice)
 
-Local desktop assistant with AI, voice recognition, and system action execution. It allows opening applications, controlling volume, performing web searches, running system operations, or browsing the internet through text or voice commands.
-
-Built with Python, Ollama (Mistral 7B), Fast RAG logic, and voice control using speech_recognition and pyttsx3.
+Local desktop assistant that runs with a local LLM (Ollama), understands speech, replies via TTS, and executes registered actions (open apps, volume, searches, etc.) through text or voice.
 
 ---
 
-## 🚀 Main Features
+## Features
 
-* Local LLM model (Mistral 7B) to interpret natural instructions.
-* Execution of registered actions (open apps, volume, searches, etc.).
-* Interactive voice mode (press Ctrl + L to talk).
-* Spoken responses with pyttsx3.
-* Automatic application scanning (.lnk + UWP).
-* Modular action system with decorators and dynamic registry.
-* Automatic export of actions to JSON.
-* Lightweight and extensible CLI.
+- Local model (Mistral 7B on Ollama) to interpret commands.
+- Actions registered via decorators and loaded dynamically.
+- Automatic app scan (.lnk and UWP) to open by name.
+- Voice mode with `speech_recognition` (microphone) and spoken replies via `pyttsx3`.
+- Lightweight CLI for text interaction.
+- Automatic export of actions to JSON for internal use.
 
 ---
 
-## ⚙️ Installation
+## Installation
 
-1. Clone the repository:
-   git clone https://github.com/markush0f/virtual-assistant.git
-   cd virtual-assistant
+1) Clone and enter the project:
+```bash
+git clone https://github.com/markush0f/virtual-assistant.git
+cd virtual-assistant
+```
 
-2. Create virtual environment:
-   python -m venv venv
-   source venv/bin/activate   # Linux/macOS
-   venv\Scripts\activate      # Windows
+2) Create a virtual environment:
+```bash
+python -m venv venv
+# Linux/macOS
+source venv/bin/activate
+# Windows
+venv\Scripts\activate
+```
 
-3. Install dependencies:
-   pip install -r requirements.txt
+3) Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-4. Install Ollama and pull the model:
-   ollama pull mistral:7b-instruct (or other model)
+4) Install Ollama and pull the model:
+```bash
+ollama pull mistral:7b-instruct
+```
 
 ---
 
-## 🧩 Usage
+## Usage
 
-### CLI
-
+### CLI (text)
+```bash
 python -m assistant.core.cli.assistant_cli
+```
+Examples: `open spotify`, `search google artificial intelligence`, `volume up`, `open calculator`.
 
-Examples:
-open spotify
-search google artificial intelligence
-volume up
-open calculator
-
-### Voice Mode
-
-python -m assistant.assistant_voice  
-Press Ctrl + L to activate the microphone.
+### Voice mode
+```bash
+python main.py
+```
+Speak your command; say "salir" or "exit" to quit. Requires a microphone and audio permissions.
 
 ---
 
-## 🗂️ Available Actions
+## Available actions
 
-System: volume_up, volume_down, mute_toggle, take_screenshot  
-Browser: search_google, open_gmail, read_news  
-Multimedia: open_spotify_song, search_youtube  
-Apps: open_app, close_app  
+Loaded from `assistant/core/executor/actions`. Common examples:
+- System: `volume_up`, `volume_down`, `mute_toggle`, `take_screenshot`
+- Browser: `search_google`, `open_gmail`, `read_news`
+- Multimedia: `open_spotify_song`, `search_youtube`
+- Apps: `open_app`, `close_app`
 
 ---
 
-## 🧾 Generate Actions JSON
-
+## Regenerate actions JSON
+```bash
 python -m assistant.core.generate_actions_json
+```
 
 ---
 
-## 🧪 Tests
-
+## Tests
+```bash
 pytest
+```
 
 ---
 
-## 💡 Future Improvements
+## Next improvements
 
-External API integrations  
-Plugin system  
-Neural voices  
-Multi-language  
-Persistent memory  
-
----
-
+External integrations, plugin system, neural voices, multi-language, and persistent memory.

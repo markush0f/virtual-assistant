@@ -18,7 +18,7 @@ def register_action(description="", type="safe"):
             "module": func.__module__,
             "callable": func,
         }
-        # print(f"🟢 Registered action: {func.__name__}")
+        # print(f"Registered action: {func.__name__}")
         return func
     return decorator
 
@@ -27,7 +27,7 @@ def execute_action(action_name: str, **args):
     """Execute a registered action by name."""
     action = ACTIONS.get(action_name)
     if not action:
-        print(f"⚠️ Action '{action_name}' not found.")
+        print(f"Action '{action_name}' not found.")
         return None
 
     func = action["callable"]

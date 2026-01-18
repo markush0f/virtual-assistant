@@ -2,21 +2,21 @@ import importlib
 import pkgutil
 from pathlib import Path
 from assistant.decorators.actions_registry import ACTIONS, execute_action, list_actions
-from assistant.core.generate_actions_json import export_actions_to_json, export_actions_to_json, load_all_actions
+from assistant.core.generate_actions_json import export_actions_to_json, load_all_actions
 
 
 def initialize_actions():
     """Load all actions and generate JSON automatically."""
     load_all_actions()
     export_actions_to_json()
-    print("\n✅ Actions JSON regenerated automatically.\n")
+    print("\nActions JSON regenerated automatically.\n")
 
 
 def main():
     """CLI test mode for the assistant."""
-    initialize_actions()  # <-- se genera el JSON aquí
+    initialize_actions()  # regenerate JSON here
 
-    print("🤖 Virtual Assistant Ready!")
+    print("Virtual Assistant Ready!")
     print("Type 'list' to see all actions or 'exit' to quit.\n")
 
     while True:

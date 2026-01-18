@@ -1,6 +1,6 @@
 """
-Aplicación de Repetidor de Voz
-La aplicación repetirá lo que hayas dicho hasta que detecte la palabra "salir".
+Voice repeater test app.
+The app repeats what you say until it hears the word "salir".
 """
 
 import speech_recognition as sr
@@ -20,7 +20,7 @@ def speak(text):
 def listen():
     """Capture audio and convert to text."""
     with sr.Microphone() as source:
-        print("🎤 Listening...")
+        print("Listening...")
         audio = recognizer.listen(source)
         try:
             text = recognizer.recognize_google(audio, language="es-ES")
@@ -32,14 +32,14 @@ def listen():
 
 
 if __name__ == "__main__":
-    print("Dime algo y lo repetiré 👂")
-    speak("Hola Markus, dime algo y lo repetiré")
+    print("Dime algo y lo repetire")
+    speak("Hola Markus, dime algo y lo repetire")
 
     while True:
         text = listen()
-        print("Tú dijiste:", text)
+        print("Tu dijiste:", text)
         speak("Has dicho " + text)
 
         if "salir" in text.lower():
-            speak("Adiós")
+            speak("Adios")
             break

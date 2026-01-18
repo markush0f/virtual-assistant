@@ -15,15 +15,15 @@ def open_calculator():
 
 
 if __name__ == "__main__":
-    print("Probando apertura de apps...")
+    print("Testing app launches...")
 
-    print("→ Abriendo YouTube en el navegador")
+    print("Opening YouTube in the browser")
     open_youtube()
 
-    input("Presiona ENTER para abrir el bloc de notas...")
+    input("Press ENTER to open Notepad...")
     open_notepad()
 
-    input("Presiona ENTER para abrir la calculadora...")
+    input("Press ENTER to open Calculator...")
     open_calculator()
 
-    print("✅ Prueba terminada")
+    print("Test finished")

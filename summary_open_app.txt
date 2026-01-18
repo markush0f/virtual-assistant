@@ -1,16 +1,16 @@
 AICore.ask("abre spotify")
-   ↓
-intent_data = {"intent":"open_app", "target":"spotify"}
-   ↓
+  ->
+intent_data = {"intent": "open_app", "target": "spotify"}
+  ->
 IntentExecutor.execute(intent_data)
-   ↓
-1️⃣ Busca en actions.json → módulo app_actions
-2️⃣ Importa dinámicamente el módulo
-3️⃣ Encuentra la función open_app
-4️⃣ La ejecuta con target="spotify"
-   ↓
+  ->
+1) Busca en actions.json el modulo app_actions
+2) Importa dinamicamente el modulo
+3) Encuentra la funcion open_app
+4) La ejecuta con target="spotify"
+  ->
 app_actions.open_app("spotify")
-   ↓
+  ->
 app_manager.open_app("spotify")
-   ↓
-✅ Se abre Spotify
+  ->
+Se abre Spotify

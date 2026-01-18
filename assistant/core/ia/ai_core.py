@@ -13,7 +13,6 @@ class AICore:
     def _load_actions_description(self) -> str:
         """Read all available actions dynamically from assistant/common."""
         try:
-            # Detect the project root dynamically (the folder that contains 'assistant/')
             current_file = Path(__file__).resolve()
             project_root = next(
                 (
@@ -25,18 +24,16 @@ class AICore:
             )
 
             if not project_root:
-                print("⚠️ Could not locate project root containing 'assistant/common'")
+                print("Could not locate project root containing 'assistant/common'")
                 return "No actions available."
 
             common_dir = project_root / "assistant" / "common"
 
-            # Look for any JSON containing "actions" in the name
             possible_files = list(common_dir.glob("actions*.json"))
             if not possible_files:
-                print(f"⚠️ No action configuration files found in {common_dir}")
+                print(f"No action configuration files found in {common_dir}")
                 return "No actions available."
 
-            # Prefer actions_config.json if present
             config_path = next(
                 (f for f in possible_files if "actions_config" in f.name),
                 possible_files[0],
@@ -53,11 +50,10 @@ class AICore:
                 if name != "actions_description"
             )
 
-            # print("\n✅ Loaded actions:\n", actions_text, "\n")
             return actions_text or "No actions available."
 
-        except Exception as e:
-            print(f"⚠️ Error while loading actions: {e}")
+        except Exception as e:  # noqa: BLE001
+            print(f"Error while loading actions: {e}")
             return "No actions available."
 
     def ask(self, prompt: str) -> dict:
@@ -115,5 +111,5 @@ User:
 
             return {"intent": "text", "response": raw_output}
 
-        except Exception as e:
-                return {"intent": "error", "message": str(e)}
+        except Exception as e:  # noqa: BLE001
+            return {"intent": "error", "message": str(e)}

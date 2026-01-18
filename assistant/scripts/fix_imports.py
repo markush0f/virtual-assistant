@@ -1,9 +1,7 @@
 import os
 
-# Ruta hacia tus acciones
+# Pattern to search and replace
 ACTIONS_DIR = os.path.join(os.path.dirname(__file__), "core", "executor", "actions")
-
-# Patrón a buscar y reemplazar
 OLD_IMPORT = "from actions_registry import register_action"
 NEW_IMPORT = "from assistant.actions_registry import register_action"
 

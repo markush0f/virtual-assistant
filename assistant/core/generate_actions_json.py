@@ -14,10 +14,10 @@ def load_all_actions() -> None:
         full_module_name = f"assistant.core.executor.actions.{module_name}"
         try:
             importlib.import_module(full_module_name)
-        except Exception as e:
-            print(f"⚠️ Could not import {module_name}: {e}")
+        except Exception as e:  # noqa: BLE001
+            print(f"Could not import {module_name}: {e}")
 
-    print("✅ All action modules loaded.")
+    print("All action modules loaded.")
 
 
 def export_actions_to_json(output_file: str | None = None) -> None:
@@ -38,7 +38,7 @@ def export_actions_to_json(output_file: str | None = None) -> None:
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(actions_data, f, indent=4, ensure_ascii=False)
 
-    print(f"🧾 Actions exported to {output_file} ({len(actions_data)} total)\n")
+    print(f"Actions exported to {output_file} ({len(actions_data)} total)\n")
 
 
 if __name__ == "__main__":

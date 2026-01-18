@@ -56,7 +56,6 @@ def scan_uwp_apps(force_refresh: bool = False) -> dict:
 
     try:
 
-        # Run without auto-decoding to handle ANSI safely
         result = subprocess.run(
             ps_command,
             stdout=subprocess.PIPE,
@@ -64,7 +63,7 @@ def scan_uwp_apps(force_refresh: bool = False) -> dict:
             shell=False,
         )
 
-        # Manual decoding (UTF-8 → fallback CP1252)
+        # Manual decoding (UTF-8, fallback CP1252)
         try:
             output = result.stdout.decode("utf-8", errors="ignore")
         except UnicodeDecodeError:
@@ -100,7 +99,7 @@ def scan_uwp_apps(force_refresh: bool = False) -> dict:
         _UWP_CACHE = uwp_apps
         return uwp_apps
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Could not scan UWP apps: {e}")
         _UWP_CACHE = {}
         return {}

@@ -7,7 +7,7 @@ from assistant.decorators.actions_registry import register_action
 @register_action(description="List running processes")
 def list_processes(limit=10):
     """List running processes."""
-    print("⚙️ Listing running processes:")
+    print("Listing running processes:")
     for proc in psutil.process_iter(["pid", "name"]):
         print(f"{proc.info['pid']} - {proc.info['name']}")
         limit -= 1
@@ -22,9 +22,9 @@ def kill_process(name: str):
     for proc in psutil.process_iter(["pid", "name"]):
         if name in proc.info["name"].lower():
             psutil.Process(proc.info["pid"]).terminate()
-            print(f"❌ Killed {proc.info['name']}")
+            print(f"Killed {proc.info['name']}")
             return
-    print("⚠️ Process not found.")
+    print("Process not found.")
 
 
 @register_action(description="Get system information (CPU, RAM, Disk)")
@@ -35,9 +35,9 @@ def get_system_info():
         "version": platform.version(),
         "cpu_usage": psutil.cpu_percent(),
         "ram_usage": psutil.virtual_memory().percent,
-        "disk_usage": psutil.disk_usage("/").percent,
+        "disk_usage": psutil.disk_usage('/').percent,
     }
-    print(f"💽 System info: {info}")
+    print(f"System info: {info}")
     return info
 
 
@@ -47,22 +47,22 @@ def calculate(expression: str):
     allowed = {"__builtins__": None, "math": math}
     try:
         result = eval(expression, allowed, {})
-        print(f"🧮 {expression} = {result}")
+        print(f"{expression} = {result}")
         return result
     except Exception:
-        print("⚠️ Invalid expression.")
+        print("Invalid expression.")
         return None
 
 
 @register_action(description="Get disk usage information")
 def get_disk_usage():
     """Return disk usage information."""
-    usage = psutil.disk_usage("/")
+    usage = psutil.disk_usage('/')
     info = {
         "total": usage.total,
         "used": usage.used,
         "free": usage.free,
         "percent": usage.percent,
     }
-    print(f"💾 Disk usage: {info}")
+    print(f"Disk usage: {info}")
     return info

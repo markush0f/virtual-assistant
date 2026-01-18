@@ -9,7 +9,7 @@ def search_youtube(query: str):
     q = urllib.parse.quote_plus(query)
     url = f"https://www.youtube.com/results?search_query={q}"
     webbrowser.open(url)
-    print(f"▶️ Searching YouTube for: {query}")
+    print(f"Searching YouTube for: {query}")
 
 
 @register_action(description="Search a query on Google")
@@ -18,7 +18,7 @@ def search_google(query: str):
     q = urllib.parse.quote_plus(query)
     url = f"https://www.google.com/search?q={q}"
     webbrowser.open(url)
-    print(f"🔎 Searching Google for: {query}")
+    print(f"Searching Google for: {query}")
 
 
 @register_action(description="Search and open a song on Spotify Web")
@@ -34,11 +34,11 @@ def open_spotify_song(song: str):
 def open_gmail():
     """Open Gmail in the default browser."""
     webbrowser.open("https://mail.google.com/")
-    print("📧 Opening Gmail")
+    print("Opening Gmail")
 
 
 @register_action(description="Open Google News in the default browser")
 def read_news():
     """Open Google News."""
     webbrowser.open("https://news.google.com/")
-    print("📰 Opening Google News")
+    print("Opening Google News")
